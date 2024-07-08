@@ -1,13 +1,37 @@
+import { BN } from 'bn.js';
+
+import {
+  Program,
+  Provider,
+} from '@coral-xyz/anchor';
+import {
+  createAssociatedTokenAccountInstruction,
+  getAccount,
+  getAssociatedTokenAddress,
+} from '@solana/spl-token';
 import {
   Commitment,
   Connection,
   Finality,
   Keypair,
+  LAMPORTS_PER_SOL,
   PublicKey,
   Transaction,
-} from "@solana/web3.js";
-import { Program, Provider } from "@coral-xyz/anchor";
-import { GlobalAccount } from "./globalAccount";
+} from '@solana/web3.js';
+
+import { BondingCurveAccount } from './bondingCurveAccount';
+import {
+  toCompleteEvent,
+  toCreateEvent,
+  toSetParamsEvent,
+  toTradeEvent,
+} from './events';
+import { GlobalAccount } from './globalAccount';
+import {
+  IDL,
+  PumpFun,
+} from './IDL';
+import { bloxrouteTip } from './tip';
 import {
   CompleteEvent,
   CreateEvent,
@@ -18,28 +42,15 @@ import {
   SetParamsEvent,
   TradeEvent,
   TransactionResult,
-} from "./types";
+} from './types';
 import {
-  toCompleteEvent,
-  toCreateEvent,
-  toSetParamsEvent,
-  toTradeEvent,
-} from "./events";
-import {
-  createAssociatedTokenAccountInstruction,
-  getAccount,
-  getAssociatedTokenAddress,
-} from "@solana/spl-token";
-import { BondingCurveAccount } from "./bondingCurveAccount";
-import { BN } from "bn.js";
-import {
-  DEFAULT_COMMITMENT,
-  DEFAULT_FINALITY,
   calculateWithSlippageBuy,
   calculateWithSlippageSell,
+  DEFAULT_COMMITMENT,
+  DEFAULT_FINALITY,
   sendTx,
-} from "./util";
-import { PumpFun, IDL } from "./IDL";
+} from './util';
+
 const PROGRAM_ID = "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P";
 const MPL_TOKEN_METADATA_PROGRAM_ID =
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
@@ -272,6 +283,10 @@ export class PumpFunSDK {
     }
 
     transaction.add(
+      bloxrouteTip(buyer, 0.001 * LAMPORTS_PER_SOL)
+    )
+
+    transaction.add(
       await this.program.methods
         .buy(new BN(amount.toString()), new BN(solAmount.toString()))
         .accounts({
@@ -340,6 +355,10 @@ export class PumpFunSDK {
     const associatedUser = await getAssociatedTokenAddress(mint, seller, false);
 
     let transaction = new Transaction();
+
+    transaction.add(
+      bloxrouteTip(seller, 0.001 * LAMPORTS_PER_SOL)
+    )
 
     transaction.add(
       await this.program.methods

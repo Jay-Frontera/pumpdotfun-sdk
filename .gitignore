@@ -5,6 +5,7 @@ target
 node_modules
 test-ledger
 .yarn
+yarn.lock
 
 dist/
 
