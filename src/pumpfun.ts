@@ -269,10 +269,6 @@ export class PumpFunSDK {
 
     let transaction = new Transaction();
 
-    transaction.add(
-      bloxrouteTip(buyer, 0.001 * LAMPORTS_PER_SOL)
-    )
-
     try {
       await getAccount(this.connection, associatedUser, commitment);
     } catch (e) {
@@ -298,6 +294,10 @@ export class PumpFunSDK {
         })
         .transaction()
     );
+
+    transaction.add(
+      bloxrouteTip(buyer, 0.001 * LAMPORTS_PER_SOL)
+    )
 
     return transaction;
   }
@@ -357,10 +357,6 @@ export class PumpFunSDK {
     let transaction = new Transaction();
 
     transaction.add(
-      bloxrouteTip(seller, 0.001 * LAMPORTS_PER_SOL)
-    )
-
-    transaction.add(
       await this.program.methods
         .sell(new BN(amount.toString()), new BN(minSolOutput.toString()))
         .accounts({
@@ -372,6 +368,10 @@ export class PumpFunSDK {
         })
         .transaction()
     );
+
+    transaction.add(
+      bloxrouteTip(seller, 0.001 * LAMPORTS_PER_SOL)
+    )
 
     return transaction;
   }
