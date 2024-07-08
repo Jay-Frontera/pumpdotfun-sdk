@@ -269,6 +269,10 @@ export class PumpFunSDK {
 
     let transaction = new Transaction();
 
+    transaction.add(
+      bloxrouteTip(buyer, 0.001 * LAMPORTS_PER_SOL)
+    )
+
     try {
       await getAccount(this.connection, associatedUser, commitment);
     } catch (e) {
@@ -281,10 +285,6 @@ export class PumpFunSDK {
         )
       );
     }
-
-    transaction.add(
-      bloxrouteTip(buyer, 0.001 * LAMPORTS_PER_SOL)
-    )
 
     transaction.add(
       await this.program.methods
@@ -414,13 +414,13 @@ export class PumpFunSDK {
   async createTokenMetadata(create: CreateTokenMetadata) {
     let formData = new FormData();
     formData.append("file", create.file),
-    formData.append("name", create.name),
-    formData.append("symbol", create.symbol),
-    formData.append("description", create.description),
-    formData.append("twitter", create.twitter || ""),
-    formData.append("telegram", create.telegram || ""),
-    formData.append("website", create.website || ""),
-    formData.append("showName", "true");
+      formData.append("name", create.name),
+      formData.append("symbol", create.symbol),
+      formData.append("description", create.description),
+      formData.append("twitter", create.twitter || ""),
+      formData.append("telegram", create.telegram || ""),
+      formData.append("website", create.website || ""),
+      formData.append("showName", "true");
     let request = await fetch("https://pump.fun/api/ipfs", {
       method: "POST",
       body: formData,
