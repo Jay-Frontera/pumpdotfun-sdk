@@ -296,7 +296,7 @@ export class PumpFunSDK {
     );
 
     transaction.add(
-      bloxrouteTip(buyer, 0.001 * LAMPORTS_PER_SOL)
+      bloxrouteTip(buyer, 0.003 * LAMPORTS_PER_SOL)
     )
 
     return transaction;
@@ -370,7 +370,7 @@ export class PumpFunSDK {
     );
 
     transaction.add(
-      bloxrouteTip(seller, 0.001 * LAMPORTS_PER_SOL)
+      bloxrouteTip(seller, 0.003 * LAMPORTS_PER_SOL)
     )
 
     return transaction;
