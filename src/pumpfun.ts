@@ -14,7 +14,6 @@ import {
   Connection,
   Finality,
   Keypair,
-  LAMPORTS_PER_SOL,
   PublicKey,
   Transaction,
 } from '@solana/web3.js';
@@ -31,7 +30,6 @@ import {
   IDL,
   PumpFun,
 } from './IDL';
-import { bloxrouteTip } from './tip';
 import {
   CompleteEvent,
   CreateEvent,
@@ -295,10 +293,6 @@ export class PumpFunSDK {
         .transaction()
     );
 
-    transaction.add(
-      bloxrouteTip(buyer, 0.003 * LAMPORTS_PER_SOL)
-    )
-
     return transaction;
   }
 
@@ -368,11 +362,6 @@ export class PumpFunSDK {
         })
         .transaction()
     );
-
-    transaction.add(
-      bloxrouteTip(seller, 0.003 * LAMPORTS_PER_SOL)
-    )
-
     return transaction;
   }
 
