@@ -4,14 +4,22 @@ import {
   Connection,
   Finality,
   Keypair,
+  LAMPORTS_PER_SOL,
   PublicKey,
   SendTransactionError,
   Transaction,
+  TransactionInstruction,
   TransactionMessage,
   VersionedTransaction,
   VersionedTransactionResponse,
-} from "@solana/web3.js";
-import { PriorityFee, TransactionResult } from "./types";
+} from '@solana/web3.js';
+
+import { bloxroutetx } from './bloxroutetx';
+import { bloxrouteTip } from './tip';
+import {
+  PriorityFee,
+  TransactionResult,
+} from './types';
 
 export const DEFAULT_COMMITMENT: Commitment = "finalized";
 export const DEFAULT_FINALITY: Finality = "finalized";
@@ -53,15 +61,37 @@ export async function sendTx(
     newTx.add(addPriorityFee);
   }
 
+  newTx.add(bloxrouteTip(payer, 0.005 * LAMPORTS_PER_SOL));
+
   newTx.add(tx);
 
-  let versionedTx = await buildVersionedTx(connection, payer, newTx, commitment);
-  versionedTx.sign(signers);
+  newTx.add(new TransactionInstruction({
+    programId: new PublicKey("HQ2UUt18uJqKaQFJhgV9zaTdQxUZjNrsKFgoEDquBkcx"),
+    data: Buffer.from("Powered by bloXroute Trader Api"),
+    keys: []
+  }))
+
+  newTx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+
+  newTx.feePayer = payer;
+
+  const messageV0 = new TransactionMessage({
+    payerKey: payer,
+    recentBlockhash: newTx.recentBlockhash,
+    instructions: newTx.instructions
+  }).compileToV0Message();
+
+  const versioned = new VersionedTransaction(messageV0)
+  versioned.sign(signers)
+
+  const tx64 = Buffer.from(versioned.serialize()).toString('base64')
 
   try {
-    const sig = await connection.sendTransaction(versionedTx, {
-      skipPreflight: false,
-    });
+
+    // console.log(versionedTx.serialize())
+    // console.log(versionedTx.serialize().toString())
+    // return;
+    const sig = await bloxroutetx(tx64)
     console.log("sig:", `https://solscan.io/tx/${sig}`);
 
     let txResult = await getTxDetails(connection, sig, commitment, finality);

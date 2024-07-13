@@ -1,9 +1,8 @@
 import {
-  MessageV0,
+  LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
   TransactionInstruction,
-  TransactionMessage,
 } from '@solana/web3.js';
 
 // check documentation for latest tip wallet, and how to send tip transactions
@@ -21,43 +20,6 @@ export function bloxrouteTip(
     return SystemProgram.transfer({
         fromPubkey: senderAddress,
         toPubkey: tipAddress,
-        lamports: tipAmount,
+        lamports: 0.002 * LAMPORTS_PER_SOL,
     })
-}
-
-// check documentation for latest tip wallet, and how to send tip transactions
-const jitoAccounts = [
-    'Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY',
-    'DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL',
-    '96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5',
-    '3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT',
-    'HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe',
-    'ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49',
-    'ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt',
-    'DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh',
-]
-
-export async function jitoProcess(
-    senderAddress: PublicKey,
-    tipAmount: number,
-    lastestBlockhash: any,
-    compliedTransaction: MessageV0
-): Promise<string> {
-    const tipAddress = new PublicKey(TRADER_API_TIP_WALLET)
-
-    const randomJitoAccount = jitoAccounts[Math.floor(Math.random() * jitoAccounts.length)]
-
-    const jitTipTxFeeMessage = new TransactionMessage({
-        payerKey: senderAddress,
-        recentBlockhash: lastestBlockhash,
-        instructions: [
-            SystemProgram.transfer({
-                fromPubkey: senderAddress,
-                toPubkey: this.JitoFeeWallet,
-                lamports: tipAmount,
-            }),
-        ],
-    }).compileToV0Message();
-
-    return 'jito process done'
 }
