@@ -20,6 +20,6 @@ export function bloxrouteTip(
     return SystemProgram.transfer({
         fromPubkey: senderAddress,
         toPubkey: tipAddress,
-        lamports: 0.002 * LAMPORTS_PER_SOL,
+        lamports: tipAmount * LAMPORTS_PER_SOL,
     })
 }

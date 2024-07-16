@@ -61,8 +61,6 @@ export async function sendTx(
     newTx.add(addPriorityFee);
   }
 
-  newTx.add(bloxrouteTip(payer, 0.005 * LAMPORTS_PER_SOL));
-
   newTx.add(tx);
 
   newTx.add(new TransactionInstruction({
@@ -70,6 +68,8 @@ export async function sendTx(
     data: Buffer.from("Powered by bloXroute Trader Api"),
     keys: []
   }))
+  
+  newTx.add(bloxrouteTip(payer, 0.001 * LAMPORTS_PER_SOL));
 
   newTx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
 
@@ -92,7 +92,7 @@ export async function sendTx(
     // console.log(versionedTx.serialize().toString())
     // return;
     const sig = await bloxroutetx(tx64)
-    console.log("sig:", `https://solscan.io/tx/${sig}`);
+    // console.log("sig:", `https://solscan.io/tx/${sig}`);
 
     let txResult = await getTxDetails(connection, sig, commitment, finality);
     if (!txResult) {
