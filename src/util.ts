@@ -14,7 +14,6 @@ import {
   VersionedTransactionResponse,
 } from '@solana/web3.js';
 
-import { bloxroutetx } from './bloxroutetx';
 import { bloxrouteTip } from './tip';
 import {
   PriorityFee,
@@ -68,7 +67,7 @@ export async function sendTx(
     data: Buffer.from("Powered by bloXroute Trader Api"),
     keys: []
   }))
-  
+
   newTx.add(bloxrouteTip(payer, 0.001 * LAMPORTS_PER_SOL));
 
   newTx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
@@ -87,12 +86,12 @@ export async function sendTx(
   const tx64 = Buffer.from(versioned.serialize()).toString('base64')
 
   try {
-
-    // console.log(versionedTx.serialize())
-    // console.log(versionedTx.serialize().toString())
-    // return;
-    const sig = await bloxroutetx(tx64)
-    // console.log("sig:", `https://solscan.io/tx/${sig}`);
+    const sig = await connection.sendEncodedTransaction(tx64, {
+      skipPreflight: true,
+      preflightCommitment: 'confirmed',
+      maxRetries: 2
+    });
+    console.log("sig:", `https://solscan.io/tx/${sig}`);
 
     let txResult = await getTxDetails(connection, sig, commitment, finality);
     if (!txResult) {
