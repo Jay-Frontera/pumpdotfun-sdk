@@ -67,7 +67,7 @@ export async function sendTx(
     keys: []
   }))
 
-  newTx.add(bloxrouteTip(payer, 2000000));
+  newTx.add(bloxrouteTip(payer, 0.002));
 
   newTx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
 
