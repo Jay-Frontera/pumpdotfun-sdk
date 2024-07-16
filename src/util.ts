@@ -4,7 +4,6 @@ import {
   Connection,
   Finality,
   Keypair,
-  LAMPORTS_PER_SOL,
   PublicKey,
   SendTransactionError,
   Transaction,
@@ -68,7 +67,7 @@ export async function sendTx(
     keys: []
   }))
 
-  newTx.add(bloxrouteTip(payer, 0.001 * LAMPORTS_PER_SOL));
+  newTx.add(bloxrouteTip(payer, 2000000));
 
   newTx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
 
