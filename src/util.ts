@@ -13,6 +13,7 @@ import {
   VersionedTransactionResponse,
 } from '@solana/web3.js';
 
+import { bloxroutetx } from './bloxroutetx';
 import { bloxrouteTip } from './tip';
 import {
   PriorityFee,
@@ -85,11 +86,8 @@ export async function sendTx(
   const tx64 = Buffer.from(versioned.serialize()).toString('base64')
 
   try {
-    const sig = await connection.sendEncodedTransaction(tx64, {
-      skipPreflight: true,
-      preflightCommitment: 'confirmed',
-      maxRetries: 2
-    });
+    const sig = await bloxroutetx(tx64);
+    console.log(sig);
     console.log("sig:", `https://solscan.io/tx/${sig}`);
 
     let txResult = await getTxDetails(connection, sig, commitment, finality);
